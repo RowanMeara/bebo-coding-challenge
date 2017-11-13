@@ -1,0 +1,17 @@
+keys.*
+.idea/
+*.swp
+*.log
+*.cprof
+.DS_Store
+.cache/
+__pycache__
+dump/
+node_modules
+secrets.*
+admin/
+esportstracker.egg-info
+backend/build/
+backend/dist/
+*.map
+web/public/webpack
