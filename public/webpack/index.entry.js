@@ -73,44 +73,48 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__style_style_sass___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__style_style_sass__);
 
 
-console.log('Hello')
-navigator.mediaDevices.getUserMedia({audio: true, video: true})
-.then( (mediaStream) => {
-  // Extract and control the microphone stream
+let localVideo, remoteVideo, peerConnection
+let connectionConfig = {
+  'iceServers': [
+      {'url': 'stun:stun.services.mozilla.com'},
+      {'url': 'stun:stun.l.google.com:19302'}
+      ]
+}
+
+navigator.getUserMedia({audio: true, video: true}, (mediaStream) => {
+  // Extract the media stream
   let audioContext = new AudioContext()
   let sourceStream = audioContext.createMediaStreamSource(mediaStream)
 
-  // Create gainNode
+  // Connect the stream to the gainNode and the gainNode to the destination
   let gain = audioContext.createGain()
-  gain.gain.value = 0.1
-
-
-  // Connect the stream to the and the gainNode to the destination
   sourceStream.connect(gain)
   gain.connect(audioContext.destination)
 
-  //mediaStream.getAudioTracks()[0].enabled = true
-
   let micStream = audioContext.createMediaStreamDestination().stream
 
+
+  let micAudioTrack = micStream.getAudioTracks()[0];
+  mediaStream.addTrack(micAudioTrack)
+  let originalAudioTrack = mediaStream.getAudioTracks()[0];
+  mediaStream.removeTrack(originalAudioTrack)
+
   // Play video
-  let video = document.querySelector('video')
-  video.src = window.URL.createObjectURL(mediaStream)
+  let video = document.querySelector('#localvideo')
+  video.srcObject = mediaStream
   video.onloadedmetadata = () => {
     video.play()
   }
 
-  // Play audio
-  let audio = document.querySelector('audio')
-  audio.src = window.URL.createObject(micStream)
-  audio.onloadedmetadata = () => {
-    audio.play()
+  // Adjust microphone volume
+  let range = document.querySelector('#micvolume')
+  gain.gain.value = 0.5
+  range.oninput = () => {
+    gain.gain.value = range.value / 100
   }
 
-  // Adjust microphone volume
-  gain.gain.value = 0.1;
 
-}).catch( (err) => {
+}, (err) => {
   console.log(err.name + ": " + err.message)
 })
 
