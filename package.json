@@ -6,13 +6,24 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "bootstrap": "^4.0.0-beta.2",
+    "css-loader": "^0.28.7",
     "body-parser": "~1.18.2",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
+    "file-loader": "^0.11.2",
     "express": "~4.15.5",
+    "font-awesome": "^4.7.0",
+    "jquery": "^3.2.1",
+    "node-sass": "^4.6.0",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.18.2",
+    "url-loader": "^0.5.9",
+    "extract-text-webpack-plugin": "^3.0.2",
     "jade": "~1.11.0",
     "morgan": "~1.9.0",
-    "node-sass-middleware": "0.9.8",
-    "serve-favicon": "~2.4.5"
+    "node-sass-middleware": "^0.9.8",
+    "serve-favicon": "~2.4.5",
+    "webpack": "^3.8.1"
   }
 }
