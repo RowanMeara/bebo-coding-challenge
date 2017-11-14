@@ -91,7 +91,7 @@ let peerConnectionConfig = {
 }
 
 //let webSocketURL = 'wss://challenge.rowanmeara.com/websocket'
-let webSocketURL = 'wss://' + window.location.hostname + ':3434'
+let webSocketURL = 'wss://' + window.location.hostname + ':8443'
 
 function pageReady() {
   uuid = getUuid()
