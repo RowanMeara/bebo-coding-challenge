@@ -40,6 +40,7 @@ function pageReady() {
 }
 
 function getUserMediaSuccess(stream) {
+  console.log(stream.getTracks())
   localStream = stream
   localVideo.src = window.URL.createObjectURL(stream)
 
@@ -115,6 +116,9 @@ function createdDescription(description) {
 
 function gotRemoteStream(event) {
   console.log('got remote stream')
+  console.log(event)
+  console.log(event.stream)
+  console.log(event.stream.getTracks())
   remoteVideo.src = window.URL.createObjectURL(event.stream)
 }
 
