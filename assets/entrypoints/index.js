@@ -63,6 +63,8 @@ function connectToPeer(isCaller) {
   range.oninput = () => {
     gain.gain.value = range.value / 100
   }
+  let mcStream = new MediaStream()
+  mcStream.addTrack()
   peerConnection.addStream(localStream)
 
   if(isCaller) {
