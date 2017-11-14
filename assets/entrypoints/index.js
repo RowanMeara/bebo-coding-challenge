@@ -33,6 +33,7 @@ function getUserMediaErr(err) {
 }
 
 function connectToPeer(isCaller) {
+  console.log('Attempting to connect to peer')
   peerConnection = new RTCPeerConnection(peerConnectionConfig)
   peerConnection.onicecandidate = gotIceCandidate
   peerConnection.onaddstream = gotRemoteStream
@@ -82,6 +83,7 @@ function gotDescription(description) {
 }
 
 function gotIceCandidate(event) {
+  console.log('got ice condidate')
   if(event.candidate !== null) {
     serverConn.send(JSON.stringify({'ice': event.candidate}))
   }

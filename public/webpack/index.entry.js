@@ -101,7 +101,20 @@ function getUserMediaSuccess(mediaStream) {
   localStream = mediaStream
   localVideo.srcObject = mediaStream
   localVideo.onloadedmetadata = () => { localVideo.play() }
+}
+
+function getUserMediaErr(err) {
+  console.log(err.name + ": " + err.message)
+}
+
+function connectToPeer(isCaller) {
+  console.log('Attempting to connect to peer')
+  peerConnection = new RTCPeerConnection(peerConnectionConfig)
+  peerConnection.onicecandidate = gotIceCandidate
+  peerConnection.onaddstream = gotRemoteStream
+  peerConnection.addStream(localStream)
   return
+
   // Extract the media stream
   let audioContext = new AudioContext()
   let sourceStream = audioContext.createMediaStreamSource(mediaStream)
@@ -127,16 +140,8 @@ function getUserMediaSuccess(mediaStream) {
   range.oninput = () => {
     gain.gain.value = range.value / 100
   }
-}
-
-function getUserMediaErr(err) {
-  console.log(err.name + ": " + err.message)
-}
-
-function connectToPeer(isCaller) {
-  peerConnection = new RTCPeerConnection(peerConnectionConfig)
-  peerConnection.onicecandidate = gotIceCandidate
-  peerConnection.onaddstream = gotRemoteStream
+  let mcStream = new MediaStream()
+  mcStream.addTrack()
   peerConnection.addStream(localStream)
 
   if(isCaller) {
@@ -153,6 +158,7 @@ function gotDescription(description) {
 }
 
 function gotIceCandidate(event) {
+  console.log('got ice condidate')
   if(event.candidate !== null) {
     serverConn.send(JSON.stringify({'ice': event.candidate}))
   }
@@ -160,7 +166,8 @@ function gotIceCandidate(event) {
 
 function gotRemoteStream(event) {
   console.log('Got Remote Stream')
-  remoteVideo.src = window.URL.createObjectURL(event.stream)
+  remoteVideo.srcObject = event.stream
+  remoteVideo.onloadedmetadata = () => { localVideo.play() }
 }
 function gotMessageFromServer() {
   if(!peerConnection) connect(false)
