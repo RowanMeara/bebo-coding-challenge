@@ -9,14 +9,8 @@ const serverConfig = {
   cert: fs.readFileSync('/etc/letsencrypt/live/challenge.rowanmeara.com/fullchain.pem')
 }
 
-let handleRequest = function(request, response) {
-  console.log('request received: ' + request.url)
-  response.writeHead(200, {'Content-Type': 'application/javascript'})
-  response.end(fs.readFileSync('client/webrtc.js'))
-}
-
-let httpsServer = https.createServer(serverConfig, handleRequest)
-httpsServer.listen(3434)
+let httpsServer = https.createServer(serverConfig)
+httpsServer.listen(3001)
 
 let wss = new WebSocketServer({server: httpsServer})
 wss.on('connection', function(ws) {
