@@ -83,8 +83,8 @@ function start(isCaller) {
 function gotMessageFromServer(message) {
   if(!peerConnection) start(false)
 
-  let signal = JSON.parse(message.data)
   console.log(message.data)
+  let signal = JSON.parse(message.data)
   console.log(signal)
 
   // Ignore messages from ourself
