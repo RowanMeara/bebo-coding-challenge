@@ -37,7 +37,7 @@ wss.broadcast = function(data) {
   } else {
     this.clients.forEach(function(client) {
       if(client.readyState === WebSocket.OPEN) {
-        client.send({'reject': true})
+        client.send('{"reject": 0}')
       }
     })
   }
