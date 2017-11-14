@@ -2,8 +2,8 @@ import $ from 'jquery'
 import '../style/style.sass'
 
 let remoteServerURL =  'ws://127.0.0.1:3434'
-let localVideo, remoteVideo, peerConnection
-let connectionConfig = {
+let localVideo, remoteVideo, peerConnection, localStream, serverConn
+let peerConnectionConfig = {
   'iceServers': [
       {'url': 'stun:stun.services.mozilla.com'},
       {'url': 'stun:stun.l.google.com:19302'}
@@ -13,14 +13,17 @@ let connectionConfig = {
 function pageReady() {
   localVideo = document.getElementById('local-video')
   remoteVideo = document.getElementById('remote-video')
+  document.getElementById('start-button').onclick = () => {connectToPeer(true)};
 
-  let serverConn = new WebSocket(remoteServerURL)
+
+  serverConn = new WebSocket(remoteServerURL)
   serverConn.onmessage = gotMessageFromServer
   navigator.getUserMedia({audio: true, video: true}, getUserMediaSuccess, getUserMediaErr)
 }
 
 function getUserMediaSuccess(mediaStream) {
   // Play local video
+  localStream = mediaStream
   localVideo.srcObject = mediaStream
   localVideo.onloadedmetadata = () => { localVideo.play() }
   return
@@ -74,9 +77,9 @@ function gotDescription(description) {
   })
 }
 
-function gotIceCandidateEvent(event) {
+function gotIceCandidate(event) {
   if(event.candidate !== null) {
-    serverConnection.send(JSON.stringify({'ice': event.candidate}))
+    serverConn.send(JSON.stringify({'ice': event.candidate}))
   }
 }
 
@@ -85,7 +88,7 @@ function gotRemoteStream(event) {
   remoteVideo.src = window.URL.createObjectURL(event.stream)
 }
 function gotMessageFromServer() {
-  if(!peerConnection) start(false)
+  if(!peerConnection) connect(false)
 
   let signal = JSON.parse(message.data)
   if(signal.sdp) {
@@ -98,5 +101,7 @@ function gotMessageFromServer() {
     peerConnection.addIceCandidate(new RTCIceCandidate(signal.ice));
   }
 }
+
+
 
 $(document).ready(pageReady)
