@@ -40,8 +40,7 @@ function pageReady() {
 }
 
 function getUserMediaSuccess(stream) {
-  console.log(stream.getTracks())
-  localStream = stream
+  console.log('Entered User Media Function')
   localVideo.src = window.URL.createObjectURL(stream)
 
   // Extract the media stream
@@ -67,6 +66,12 @@ function getUserMediaSuccess(stream) {
   range.oninput = () => {
     gain.gain.value = range.value / 100
   }
+  localStream = stream
+
+  console.log('MIC_AUDIO_TRACK')
+  console.log(micAudioTrack)
+  console.log('LOCAL STREAM')
+  console.log(localStream.getTracks())
 }
 
 function start(isCaller) {
@@ -120,6 +125,9 @@ function gotRemoteStream(event) {
   console.log(event.stream)
   console.log(event.stream.getTracks())
   remoteVideo.src = window.URL.createObjectURL(event.stream)
+  remoteVideo.onloadedmetadata = () => {
+    remoteVideo.play()
+  }
 }
 
 function errorHandler(error) {
