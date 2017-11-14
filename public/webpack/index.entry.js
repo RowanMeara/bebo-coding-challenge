@@ -140,7 +140,7 @@ function getUserMediaSuccess(stream) {
   serverConnection = new WebSocket('wss://challenge.rowanmeara.com:3001')
   serverConnection.onmessage = gotMessageFromServer
   serverConnection.onopen = () => {
-    //start(true)
+    start(true)
   }
 }
 

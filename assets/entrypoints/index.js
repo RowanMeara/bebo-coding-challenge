@@ -65,7 +65,7 @@ function getUserMediaSuccess(stream) {
   serverConnection = new WebSocket('wss://challenge.rowanmeara.com:3001')
   serverConnection.onmessage = gotMessageFromServer
   serverConnection.onopen = () => {
-    //start(true)
+    start(true)
   }
 }
 
@@ -84,6 +84,8 @@ function gotMessageFromServer(message) {
   if(!peerConnection) start(false)
 
   let signal = JSON.parse(message.data)
+  console.log(message.data)
+  console.log(signal)
 
   // Ignore messages from ourself
   if(signal.uuid === uuid) return

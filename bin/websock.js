@@ -34,5 +34,11 @@ wss.broadcast = function(data) {
         client.send(data)
       }
     })
+  } else {
+    this.clients.forEach(function(client) {
+      if(client.readyState === WebSocket.OPEN) {
+        client.send('reject')
+      }
+    })
   }
 }
