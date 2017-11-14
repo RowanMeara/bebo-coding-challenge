@@ -99,19 +99,13 @@ function pageReady() {
 
   localVideo = document.getElementById('local-video')
   remoteVideo = document.getElementById('remote-video')
-  serverConnection = new WebSocket('wss://challenge.rowanmeara.com:3001')
-  serverConnection.onmessage = gotMessageFromServer
 
   let constraints = {
     video: true,
     audio: true,
   }
 
-  if(navigator.mediaDevices.getUserMedia) {
-    navigator.mediaDevices.getUserMedia(constraints).then(getUserMediaSuccess).catch(errorHandler)
-  } else {
-    alert('Your browser does not support getUserMedia API')
-  }
+  navigator.mediaDevices.getUserMedia(constraints).then(getUserMediaSuccess).catch(errorHandler)
 }
 
 function getUserMediaSuccess(stream) {
@@ -142,6 +136,12 @@ function getUserMediaSuccess(stream) {
     gain.gain.value = range.value / 100
   }
   localStream = stream
+
+  serverConnection = new WebSocket('wss://challenge.rowanmeara.com:3001')
+  serverConnection.onmessage = gotMessageFromServer
+  serverConnection.onopen = () => {
+    //start(true)
+  }
 }
 
 function start(isCaller) {

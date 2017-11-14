@@ -22,9 +22,17 @@ wss.on('connection', function(ws) {
 })
 
 wss.broadcast = function(data) {
+  let clientsReady = 0
   this.clients.forEach(function(client) {
     if(client.readyState === WebSocket.OPEN) {
-      client.send(data)
+      clientsReady++
     }
   })
+  if (clientsReady > 2) {
+    this.clients.forEach(function(client) {
+      if(client.readyState === WebSocket.OPEN) {
+        client.send(data)
+      }
+    })
+  }
 }
