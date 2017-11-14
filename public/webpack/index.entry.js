@@ -135,6 +135,7 @@ function getUserMediaErr(err) {
 }
 
 function connectToPeer(isCaller) {
+  console.log('Connecting To Peer')
   peerConnection = new RTCPeerConnection(peerConnectionConfig)
   peerConnection.onicecandidate = gotIceCandidate
   peerConnection.onaddstream = gotRemoteStream
@@ -154,7 +155,9 @@ function gotDescription(description) {
 }
 
 function gotIceCandidate(event) {
+  console.log('Got Ice candidate')
   if(event.candidate !== null) {
+    console.log('Ice candidate not null')
     serverConn.send(JSON.stringify({'ice': event.candidate}))
   }
 }
@@ -163,6 +166,7 @@ function gotRemoteStream(event) {
   console.log('Got Remote Stream')
   remoteVideo.src = window.URL.createObjectURL(event.stream)
 }
+
 function gotMessageFromServer() {
   if(!peerConnection) connect(false)
 
