@@ -80,9 +80,9 @@ let remoteServerURL =  'ws://127.0.0.1:3434'
 let localVideo, remoteVideo, peerConnection, localStream, serverConn
 let peerConnectionConfig = {
   'iceServers': [
-      {'url': 'stun:stun.services.mozilla.com'},
-      {'url': 'stun:stun.l.google.com:19302'}
-      ]
+    {'url': 'stun:stun.services.mozilla.com'},
+    {'url': 'stun:stun.l.google.com:19302'}
+  ]
 }
 
 function pageReady() {
@@ -101,20 +101,7 @@ function getUserMediaSuccess(mediaStream) {
   localStream = mediaStream
   localVideo.srcObject = mediaStream
   localVideo.onloadedmetadata = () => { localVideo.play() }
-}
-
-function getUserMediaErr(err) {
-  console.log(err.name + ": " + err.message)
-}
-
-function connectToPeer(isCaller) {
-  console.log('Attempting to connect to peer')
-  peerConnection = new RTCPeerConnection(peerConnectionConfig)
-  peerConnection.onicecandidate = gotIceCandidate
-  peerConnection.onaddstream = gotRemoteStream
-  peerConnection.addStream(localStream)
   return
-
   // Extract the media stream
   let audioContext = new AudioContext()
   let sourceStream = audioContext.createMediaStreamSource(mediaStream)
@@ -140,8 +127,16 @@ function connectToPeer(isCaller) {
   range.oninput = () => {
     gain.gain.value = range.value / 100
   }
-  let mcStream = new MediaStream()
-  mcStream.addTrack()
+}
+
+function getUserMediaErr(err) {
+  console.log(err.name + ": " + err.message)
+}
+
+function connectToPeer(isCaller) {
+  peerConnection = new RTCPeerConnection(peerConnectionConfig)
+  peerConnection.onicecandidate = gotIceCandidate
+  peerConnection.onaddstream = gotRemoteStream
   peerConnection.addStream(localStream)
 
   if(isCaller) {
@@ -158,7 +153,6 @@ function gotDescription(description) {
 }
 
 function gotIceCandidate(event) {
-  console.log('got ice condidate')
   if(event.candidate !== null) {
     serverConn.send(JSON.stringify({'ice': event.candidate}))
   }
@@ -166,8 +160,7 @@ function gotIceCandidate(event) {
 
 function gotRemoteStream(event) {
   console.log('Got Remote Stream')
-  remoteVideo.srcObject = event.stream
-  remoteVideo.onloadedmetadata = () => { localVideo.play() }
+  remoteVideo.src = window.URL.createObjectURL(event.stream)
 }
 function gotMessageFromServer() {
   if(!peerConnection) connect(false)

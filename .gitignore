@@ -14,4 +14,4 @@ esportstracker.egg-info
 backend/build/
 backend/dist/
 *.map
-web/public/webpack
+public/webpack
