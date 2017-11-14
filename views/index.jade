@@ -3,7 +3,7 @@ extends layout
 block content
   h1= title
   p Welcome to #{title}
-  video(id='local-video' width='640' height='480' controls)
+  video(id='local-video' autoplay muted width='640' height='480')
   video(id='remote-video' width='640' height='480' controls)
   h2= 'Microphone Volume'
   input(type='range' id='micvolume')
