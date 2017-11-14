@@ -28,7 +28,7 @@ wss.broadcast = function(data) {
       clientsReady++
     }
   })
-  if (clientsReady > 2) {
+  if (clientsReady > 1) {
     this.clients.forEach(function(client) {
       if(client.readyState === WebSocket.OPEN) {
         client.send(data)
