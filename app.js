@@ -43,23 +43,4 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-//
-// WEBSOCKET
-//
-const WebSocketServer = require('ws').Server
-
-const wss = new WebSocketServer({port: 3434})
-console.log('Websocket Server Starting')
-wss.broadcast = (data) => {
-  for(let i in this.clients) {
-    this.clients[i].send(data)
-  }
-}
-
-wss.on('connection', (ws) => {
-  ws.on('message', (message) => {
-    console.log('received: %s', message)
-    wss.broadcast(message)
-  })
-})
 module.exports = app;
