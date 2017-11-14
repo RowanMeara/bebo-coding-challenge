@@ -20,7 +20,7 @@ let peerConnectionConfig = {
 
 function pageReady() {
   uuid = uuidv1()
-  document.getElementById('start-button').onclick = () => {start(true)}
+  //document.getElementById('start-button').onclick = () => {start(true)}
 
   localVideo = document.getElementById('local-video')
   remoteVideo = document.getElementById('remote-video')
@@ -65,11 +65,12 @@ function getUserMediaSuccess(stream) {
   serverConnection = new WebSocket('wss://challenge.rowanmeara.com:3001')
   serverConnection.onmessage = gotMessageFromServer
   serverConnection.onopen = () => {
-    start(true)
+    serverConnection.send(JSON.stringify({'firstMsg': 1, 'uuid': uuid}))
   }
 }
 
 function start(isCaller) {
+  console.log('Starting')
   peerConnection = new RTCPeerConnection(peerConnectionConfig)
   peerConnection.onicecandidate = gotIceCandidate
   peerConnection.onaddstream = gotRemoteStream
@@ -81,13 +82,24 @@ function start(isCaller) {
 }
 
 function gotMessageFromServer(message) {
-  if(!peerConnection) start(false)
+  let signal = JSON.parse(message.data)
 
   console.log(message.data)
-  let signal = JSON.parse(message.data)
-  console.log(signal)
 
-  // Ignore messages from ourself
+  if (typeof(signal.reject) !== 'undefined') {
+    return
+  } else if(typeof(signal.firstMsg) !== 'undefined') {
+    if (signal.uuid === uuid) {
+      start(true)
+      return
+    } else {
+      return
+    }
+  }
+
+  if(!peerConnection) start(false)
+
+  // Ignore signal messages from ourself
   if(signal.uuid === uuid) return
 
   if(signal.sdp) {
