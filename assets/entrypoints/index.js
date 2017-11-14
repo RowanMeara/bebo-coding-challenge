@@ -1,12 +1,15 @@
 import $ from 'jquery'
 import '../style/style.sass'
 
+const uuidv1 = require('uuid/v1')
+
 let localVideo
 let remoteVideo
 let peerConnection
 let uuid
 let serverConnection
 let localStream
+let micStream
 
 let peerConnectionConfig = {
   'iceServers': [
@@ -16,7 +19,7 @@ let peerConnectionConfig = {
 }
 
 function pageReady() {
-  uuid = getUuid()
+  uuid = uuidv1()
   document.getElementById('start-button').onclick = () => {start(true)}
 
   localVideo = document.getElementById('local-video')
@@ -39,26 +42,23 @@ function pageReady() {
 function getUserMediaSuccess(stream) {
   localStream = stream
   localVideo.src = window.URL.createObjectURL(stream)
-  return
-  return
+
   // Extract the media stream
   let audioContext = new AudioContext()
-  let sourceStream = audioContext.createMediaStreamSource(mediaStream)
+  let sourceStream = audioContext.createMediaStreamSource(stream)
 
   // Connect the stream to the gainNode and the gainNode to the destination
   let gain = audioContext.createGain()
   sourceStream.connect(gain)
-  gain.connect(audioContext.destination)
+  let destination = audioContext.createMediaStreamDestination()
+  gain.connect(destination)
 
-  let micStream = audioContext.createMediaStreamDestination().stream
-
+  let micStream = destination.stream
 
   let micAudioTrack = micStream.getAudioTracks()[0]
-  mediaStream.addTrack(micAudioTrack)
-  let originalAudioTrack = mediaStream.getAudioTracks()[0]
-  mediaStream.removeTrack(originalAudioTrack)
-
-
+  stream.addTrack(micAudioTrack)
+  let originalAudioTrack = stream.getAudioTracks()[0]
+  stream.removeTrack(originalAudioTrack)
 
   // Adjust microphone volume
   let range = document.querySelector('#micvolume')
@@ -66,7 +66,6 @@ function getUserMediaSuccess(stream) {
   range.oninput = () => {
     gain.gain.value = range.value / 100
   }
-
 }
 
 function start(isCaller) {
@@ -86,12 +85,12 @@ function gotMessageFromServer(message) {
   let signal = JSON.parse(message.data)
 
   // Ignore messages from ourself
-  if(signal.uuid == uuid) return
+  if(signal.uuid === uuid) return
 
   if(signal.sdp) {
     peerConnection.setRemoteDescription(new RTCSessionDescription(signal.sdp)).then(function() {
       // Only create answers in response to offers
-      if(signal.sdp.type == 'offer') {
+      if(signal.sdp.type === 'offer') {
         peerConnection.createAnswer().then(createdDescription).catch(errorHandler)
       }
     }).catch(errorHandler)
@@ -122,17 +121,6 @@ function gotRemoteStream(event) {
 function errorHandler(error) {
   console.log(error)
 }
-
-// Taken from http://stackoverflow.com/a/105074/515584
-// Strictly speaking, it's not a real UUID, but it gets the job done here
-function getUuid() {
-  function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1)
-  }
-
-  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4()
-}
-
 
 
 $(document).ready(pageReady)
