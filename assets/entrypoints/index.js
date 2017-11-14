@@ -55,8 +55,48 @@ function getUserMediaErr(err) {
   console.log(err.name + ": " + err.message)
 }
 
-function gotMessageFromServer() {
+function connectToPeer(isCaller) {
+  peerConnection = new RTCPeerConnection(peerConnectionConfig)
+  peerConnection.onicecandidate = gotIceCandidate
+  peerConnection.onaddstream = gotRemoteStream
+  peerConnection.addStream(localStream)
 
+  if(isCaller) {
+    peerConnection.createOffer(gotDescription, getUserMediaErr)
+  }
+
+}
+
+function gotDescription(description) {
+  console.log('got description')
+  peerConnection.setLocalDescription(description, () => {
+    serverConn.send(JSON.stringify({'sdp': description}), getUserMediaErr)
+  })
+}
+
+function gotIceCandidateEvent(event) {
+  if(event.candidate !== null) {
+    serverConnection.send(JSON.stringify({'ice': event.candidate}))
+  }
+}
+
+function gotRemoteStream(event) {
+  console.log('Got Remote Stream')
+  remoteVideo.src = window.URL.createObjectURL(event.stream)
+}
+function gotMessageFromServer() {
+  if(!peerConnection) start(false)
+
+  let signal = JSON.parse(message.data)
+  if(signal.sdp) {
+    peerConnection.setRemoteDescription(new RTCSessionDescription(signal.sdp), function() {
+      if(signal.sdp.type === 'offer') {
+        peerConnection.createAnswer(gotDescription, createAnswerError);
+      }
+    })
+  } else if(signal.ice) {
+    peerConnection.addIceCandidate(new RTCIceCandidate(signal.ice));
+  }
 }
 
 $(document).ready(pageReady)
