@@ -26,7 +26,18 @@ function getUserMediaSuccess(mediaStream) {
   localStream = mediaStream
   localVideo.srcObject = mediaStream
   localVideo.onloadedmetadata = () => { localVideo.play() }
-  return
+}
+
+function getUserMediaErr(err) {
+  console.log(err.name + ": " + err.message)
+}
+
+function connectToPeer(isCaller) {
+  peerConnection = new RTCPeerConnection(peerConnectionConfig)
+  peerConnection.onicecandidate = gotIceCandidate
+  peerConnection.onaddstream = gotRemoteStream
+
+
   // Extract the media stream
   let audioContext = new AudioContext()
   let sourceStream = audioContext.createMediaStreamSource(mediaStream)
@@ -52,16 +63,6 @@ function getUserMediaSuccess(mediaStream) {
   range.oninput = () => {
     gain.gain.value = range.value / 100
   }
-}
-
-function getUserMediaErr(err) {
-  console.log(err.name + ": " + err.message)
-}
-
-function connectToPeer(isCaller) {
-  peerConnection = new RTCPeerConnection(peerConnectionConfig)
-  peerConnection.onicecandidate = gotIceCandidate
-  peerConnection.onaddstream = gotRemoteStream
   peerConnection.addStream(localStream)
 
   if(isCaller) {
