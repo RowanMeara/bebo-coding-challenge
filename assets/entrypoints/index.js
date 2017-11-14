@@ -36,7 +36,8 @@ function connectToPeer(isCaller) {
   peerConnection = new RTCPeerConnection(peerConnectionConfig)
   peerConnection.onicecandidate = gotIceCandidate
   peerConnection.onaddstream = gotRemoteStream
-
+  peerConnection.addStream(localStream)
+  return
 
   // Extract the media stream
   let audioContext = new AudioContext()
@@ -88,7 +89,8 @@ function gotIceCandidate(event) {
 
 function gotRemoteStream(event) {
   console.log('Got Remote Stream')
-  remoteVideo.src = window.URL.createObjectURL(event.stream)
+  remoteVideo.srcObject = event.stream
+  remoteVideo.onloadedmetadata = () => { localVideo.play() }
 }
 function gotMessageFromServer() {
   if(!peerConnection) connect(false)

@@ -1,18 +1,23 @@
 # Redirect non-www to www and http to https
 server {
-    listen 443 ssl;
-    server_name challenge.rowanmeara.com;
-}
-server {
     listen 80;
     server_name challenge.rowanmeara.com;
     return 301 https://$host$request_uri;
+
+    # Redirect non-https traffic to https
+    # if ($scheme != "https") {
+    #     return 301 https://$host$request_uri;
+    # } # managed by Certbot
+
 }
-#
+
 # Node.js Server
 #
 server {
+    listen 443 ssl;
     server_name challenge.rowanmeara.com;
+    ssl_certificate /etc/letsencrypt/live/challenge.rowanmeara.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/challenge.rowanmeara.com/privkey.pem; # managed by Certbot
 
 
     # Redirect NON-https Traffic
@@ -29,10 +34,7 @@ server {
         proxy_cache_bypass $http_upgrade;
         # First attempt to serve request as file, then
         # as directory, then fall back to displaying a 404.
-        try_files $uri $uri/ =404;
+#        try_files $uri $uri/ =404;
     }
 
 }
-
-
-
