@@ -1,7 +1,8 @@
 import $ from 'jquery'
 import '../style/style.sass'
 
-let remoteServerURL =  'ws://127.0.0.1:3434'
+// let remoteServerURL =  'ws://127.0.0.1:3434'
+let remoteServerURL = 'wss://challenge.rowanmeara.com/websocket'
 let localVideo, remoteVideo, peerConnection, localStream, serverConn
 let peerConnectionConfig = {
   'iceServers': [

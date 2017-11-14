@@ -76,7 +76,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-let remoteServerURL =  'ws://127.0.0.1:3434'
+// let remoteServerURL =  'ws://127.0.0.1:3434'
+let remoteServerURL = 'wss://challenge.rowanmeara.com/websocket'
 let localVideo, remoteVideo, peerConnection, localStream, serverConn
 let peerConnectionConfig = {
   'iceServers': [
