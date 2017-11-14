@@ -15,20 +15,13 @@ let peerConnectionConfig = {
   ]
 }
 
-let webSocketURL = 'wss://challenge.rowanmeara.com/websocket:3434'
-//let webSocketURL = 'wss://' + window.location.hostname + ':8443'
-
 function pageReady() {
   uuid = getUuid()
   document.getElementById('start-button').onclick = () => {start(true)}
 
-
   localVideo = document.getElementById('local-video')
   remoteVideo = document.getElementById('remote-video')
-
-
-
-  serverConnection = new WebSocket(webSocketURL)
+  serverConnection = new WebSocket('wss://challenge.rowanmeara.com:3001')
   serverConnection.onmessage = gotMessageFromServer
 
   let constraints = {
