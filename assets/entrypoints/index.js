@@ -67,11 +67,6 @@ function getUserMediaSuccess(stream) {
     gain.gain.value = range.value / 100
   }
   localStream = stream
-
-  console.log('MIC_AUDIO_TRACK')
-  console.log(micAudioTrack)
-  console.log('LOCAL STREAM')
-  console.log(localStream.getTracks())
 }
 
 function start(isCaller) {
@@ -121,9 +116,6 @@ function createdDescription(description) {
 
 function gotRemoteStream(event) {
   console.log('got remote stream')
-  console.log(event)
-  console.log(event.stream)
-  console.log(event.stream.getTracks())
   remoteVideo.src = window.URL.createObjectURL(event.stream)
   remoteVideo.onloadedmetadata = () => {
     remoteVideo.play()
