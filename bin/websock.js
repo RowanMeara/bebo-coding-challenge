@@ -16,9 +16,9 @@ let handleRequest = function(request, response) {
 }
 
 let httpsServer = https.createServer(serverConfig, handleRequest)
-httpServer.listen(3434)
+httpsServer.listen(3434)
 
-let wss = new WebSocketServer({server: httpServer})
+let wss = new WebSocketServer({server: httpsServer})
 wss.on('connection', function(ws) {
   ws.on('message', function(message) {
     // Broadcast any received message to all clients
